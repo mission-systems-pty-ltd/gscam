@@ -25,7 +25,7 @@ extern "C"{
 
 #include <camera_calibration_parsers/parse_ini.h>
 
-#include <gscam/gscam.h>
+#include "gscam/gscam.h"
 #include "gscam/gst_utils.h"
 
 namespace gscam {
