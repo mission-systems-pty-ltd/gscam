@@ -26,6 +26,7 @@ extern "C"{
 #include <camera_calibration_parsers/parse_ini.h>
 
 #include <gscam/gscam.h>
+#include "gscam/gst_utils.h"
 
 namespace gscam {
 
@@ -82,6 +83,7 @@ namespace gscam {
 
     // Get the image encoding
     nh_private_.param("image_encoding", image_encoding_, sensor_msgs::image_encodings::RGB8);
+    ROS_DEBUG_STREAM("image encoding = " << image_encoding_);
     if (image_encoding_ != sensor_msgs::image_encodings::RGB8 &&
         image_encoding_ != sensor_msgs::image_encodings::RGBA8 &&
         image_encoding_ != sensor_msgs::image_encodings::MONO8 &&
@@ -182,8 +184,12 @@ namespace gscam {
         return false;
       }
 
+      ROS_DEBUG( "linking %s to %s", gst_element_get_name( outelement ), gst_element_get_name( sink_ ));
+
       if(!gst_element_link(outelement, sink_)) {
         ROS_FATAL("GStreamer: cannot link outelement(\"%s\") -> sink\n", gst_element_get_name(outelement));
+        print_pads( outelement, true );
+        print_pads( sink_, false );
         gst_object_unref(outelement);
         gst_object_unref(pipeline_);
         return false;
